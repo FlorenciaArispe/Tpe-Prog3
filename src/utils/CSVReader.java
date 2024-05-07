@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import clases.Tarea;
+
 
 
 public class CSVReader {
@@ -13,14 +15,15 @@ public class CSVReader {
     public CSVReader() {
     }
 
-    public void readTasks(String taskPath) {
-
+    public ArrayList<Tarea> readTasks(String taskPath) {
+        ArrayList<Tarea> tareas= new ArrayList<>();
         // Obtengo una lista con las lineas del archivo
         // lines.get(0) tiene la primer linea del archivo
         // lines.get(1) tiene la segunda linea del archivo... y así
         ArrayList<String[]> lines = this.readContent(taskPath);
 
         for (String[] line: lines) {
+
             // Cada linea es un arreglo de Strings, donde cada posicion guarda un elemento
             String id = line[0].trim();
             String nombre = line[1].trim();
@@ -28,7 +31,10 @@ public class CSVReader {
             Boolean critica = Boolean.parseBoolean(line[3].trim());
             Integer prioridad = Integer.parseInt(line[4].trim());
             // Aca instanciar lo que necesiten en base a los datos leidos
+            Tarea tarea= new Tarea(id,nombre,tiempo,critica,prioridad);
+            tareas.add(tarea);
         }
+        return tareas;
 
     }
 
