@@ -12,19 +12,20 @@ import java.util.Map;
  * de implementación.
  */
 public class Servicios {
-    Map<String, Tarea> tareas= new HashMap<>();
+    Map<String, Tarea> tareas;
 
     /*
      * Expresar la complejidad temporal del constructor.
      */
     public Servicios(String pathProcesadores, String pathTareas)
     {
+        tareas= new HashMap<>();
         CSVReader reader = new CSVReader();
         ArrayList<Tarea> tareasNuevas= reader.readTasks(pathTareas);
         for(Tarea t: tareasNuevas){
             tareas.put(t.getIdTarea(), t);
         }
-        //reader.readProcessors(pathProcesadores);
+        reader.readProcessors(pathProcesadores);
 
     }
 
@@ -65,7 +66,6 @@ public class Servicios {
                 }
             }
         }
-        //ADD EXCEPTION
         return resultado;
     }
 
