@@ -6,6 +6,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import clases.Procesador;
 import clases.Tarea;
 
 
@@ -15,8 +19,8 @@ public class CSVReader {
     public CSVReader() {
     }
 
-    public ArrayList<Tarea> readTasks(String taskPath) {
-        ArrayList<Tarea> tareas= new ArrayList<>();
+    public Map<String, Tarea> readTasks(String taskPath) {
+        Map<String, Tarea> tareas= new HashMap<>();
         // Obtengo una lista con las lineas del archivo
         // lines.get(0) tiene la primer linea del archivo
         // lines.get(1) tiene la segunda linea del archivo... y así
@@ -32,19 +36,19 @@ public class CSVReader {
             Integer prioridad = Integer.parseInt(line[4].trim());
             // Aca instanciar lo que necesiten en base a los datos leidos
             Tarea tarea= new Tarea(id,nombre,tiempo,critica,prioridad);
-            tareas.add(tarea);
+            tareas.put(id, tarea);
         }
         return tareas;
 
     }
 
-    public void readProcessors(String processorPath) {
+    public Map<String, Procesador> readProcessors(String processorPath) {
 
         // Obtengo una lista con las lineas del archivo
         // lines.get(0) tiene la primer linea del archivo
         // lines.get(1) tiene la segunda linea del archivo... y así
         ArrayList<String[]> lines = this.readContent(processorPath);
-
+        Map<String, Procesador> procesadores = new HashMap<>(lines.size() * 2);
         for (String[] line: lines) {
             // Cada linea es un arreglo de Strings, donde cada posicion guarda un elemento
             String id = line[0].trim();
@@ -52,8 +56,10 @@ public class CSVReader {
             Boolean refrigerado = Boolean.parseBoolean(line[2].trim());
             Integer anio = Integer.parseInt(line[3].trim());
             // Aca instanciar lo que necesiten en base a los datos leidos
+            Procesador procesador = new Procesador(id, codigo, refrigerado, anio);
+            procesadores.put(id, procesador);
         }
-
+        return procesadores;
     }
 
     private ArrayList<String[]> readContent(String path) {
