@@ -13,6 +13,7 @@ public class Servicios {
     private Map<String, Tarea> tareas;
     private Map<String, Procesador> procesadores;
     private Map<String, LinkedList<Tarea>> asignados;
+    private ArrayList<Tarea> arrayTareas;
     private Procesador procesadorMasRapido;
     private int mejorTiempo;
     /*
@@ -24,7 +25,11 @@ public class Servicios {
         tareas = reader.readTasks(pathTareas);
         procesadores = reader.readProcessors(pathProcesadores);
         asignados = new HashMap<>();
-        procesadorMasRapido= null;
+        arrayTareas = new ArrayList<>();
+        arrayTareas.addAll(tareas.values());
+        // para ordenar las tareas
+        //ordenarArrayTareas(arrayTareas);
+        procesadorMasRapido = null;
         mejorTiempo=Integer.MAX_VALUE;
         for (String id : procesadores.keySet()) {
             asignados.put(id, new LinkedList<>());
@@ -73,7 +78,137 @@ public class Servicios {
 
 
 //PARTE 2
-    public void asignarTarea(){
+    // ESTO HICIMOS EL VIERNES EN CLASE CON LO QUE NOS DIJO SOLE
+     public void asignarTarea(){
+        Map<String, LinkedList<Tarea>> solucionParcial = new HashMap<>(asignados);
+        asignarTarea(solucionParcial);
+    }
+    private void asignarTarea(Map<String, LinkedList<Tarea>> solucionParcial){
+        // ya ta vacio
+        if(arrayTareas.isEmpty()) {
+            int tiempoProcesador = 0;
+            for(String id : solucionParcial.keySet()){
+                Procesador proc = procesadores.get(id);
+                tiempoProcesador = proc.getTiempoDeEjecucion();
+                if(tiempoProcesador<mejorTiempo){
+                    mejorTiempo = tiempoProcesador;
+                    asignados.get(proc.getId()).addAll(solucionParcial.get(proc.getId()));
+                    //asignados = new HashMap<>(solucionParcial);
+                }
+            }
+            mejorTiempo = Integer.MAX_VALUE;
+        }
+        else {
+            Tarea tarea = arrayTareas.removeFirst();
+            //             p1
+            for(Procesador p :procesadores.values()){
+                //                   tarea 10
+                // p1 me queda con las 10 tareas
+                solucionParcial.get(p.getId()).add(tarea);
+                // p1 tiempo de ejecucion = 500.
+                // p2 p3 p4 = 0.
+                p.setTiempoDeEjecucion(tarea.getTiempoEjecucion());
+                //           p1      p1 = t10.
+                asignarTarea(solucionParcial);
+                solucionParcial.get(p.getId()).removeLast();
+                p.setTiempoDeEjecucion(-tarea.getTiempoEjecucion());
+            }
+        }
+    }
+
+
+
+
+    /*public void asignarTarea(){
+        if(arrayTareas.isEmpty()){
+
+        }
+        else {
+            Tarea tarea = arrayTareas.removeFirst();
+            for(Procesador p : procesadores.values()){
+                asignados.get(p.getId()).add(tarea);
+                p.setTiempoDeEjecucion(tarea.getTiempoEjecucion());
+                if(p.getTiempoDeEjecucion() < mejorTiempo){
+                    mejorTiempo = p.getTiempoDeEjecucion();
+
+                }
+                asignarTarea();
+                p.setTiempoDeEjecucion(-tarea.getTiempoEjecucion());
+                asignados.get(p.getId()).removeLast();
+            }
+        }
+    }*/
+
+    /*public void asignarTarea(){
+
+        asignarTarea(null, null);
+    }
+    private void asignarTarea(Tarea t, Procesador procesador){
+        if(arrayTareas.isEmpty()){
+            asignados.get(procesador.getId()).add(t);
+
+        }
+        else{
+            Tarea tarea = arrayTareas.removeFirst(); // agarro mi primer tarea y la saco del array
+            for(Procesador p :procesadores.values()){
+                asignados.get(p.getId()).add(tarea);
+                p.setTiempoDeEjecucion(tarea.getTiempoEjecucion());
+                if(p.getTiempoDeEjecucion() < mejorTiempo){
+                    mejorTiempo = p.getTiempoDeEjecucion();
+                }
+                asignarTarea(tarea,p);
+                asignados.get(p.getId()).removeLast();
+                p.setTiempoDeEjecucion(-tarea.getTiempoEjecucion());
+            }
+        }
+    }*/
+
+    /*public void ordenarArrayTareas(ArrayList<Tarea> arrayTareas){
+        mergeSort(arrayTareas, 0, arrayTareas.size()-1);
+        System.out.println("array ordenado supueeeeeestamente" + arrayTareas);
+    }
+    //Ordenamiento MergeSort: divide en 2, ordena la parte izquierda, ordena la derecha, y junta ambas ordenadas.
+    public void mergeSort(ArrayList<Tarea> arr, int inicio,int fin){
+        if(inicio<fin){ //CASO BASE: el array tiene un solo elemento (inicio mayor que fin)
+            int medio= (inicio+fin)/2;
+            mergeSort(arr,inicio, medio); // ordena la mitad izquierda del array
+            mergeSort(arr,medio+1, fin); // ordena la mitad derecha del array
+            merge(arr, inicio, medio, fin); // combina ambas mitades ordenadas
+        }
+    }
+
+    public void merge( ArrayList<Tarea> arr, int inicio, int medio, int fin){
+        ArrayList<Tarea> aux = new ArrayList<>(fin - inicio + 1);
+
+        int i = inicio;
+        int j = medio+1;
+        int k = inicio;
+
+        while( i <= medio && j <= fin){
+            if( aux.get(i).getTiempoEjecucion() <= aux.get(j).getTiempoEjecucion()) {
+                //arr.get(k) = aux.get(i);
+                arr.add(k, aux.get(i));
+                i++;
+            }
+            else{
+                arr.add(k, aux.get(j));
+                j++;
+            }
+            k++;
+        }
+        //si quedan elementos copiarlos en el array original
+        while(i <= medio){
+            arr.add(k, aux.get(i));
+            k++;
+            i++;
+        }
+        while (j<=fin){
+            arr.add(k, aux.get(j));
+            k++;
+            j++;
+        }
+    }*/
+    /*public void asignarTarea(){
         ArrayList<String> visitados = new ArrayList<>();
 
         Iterator<String> it_Tareas = tareas.keySet().iterator();
@@ -108,7 +243,7 @@ public class Servicios {
             asignados.get(procesadorNuevo.getId()).remove(t);
             procesadorNuevo.setTiempoDeEjecucion(-t.getTiempoEjecucion());
         }
-    }
+    }*/
 
     public Map<String, LinkedList<Tarea>> getAsignados() {
         return asignados;
