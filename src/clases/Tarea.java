@@ -17,21 +17,6 @@ public class Tarea {
         this.nivelPrioridad = nivelPrioridad;
     }
 
-    public void setNombreTarea(String nombreTarea) {
-        this.nombreTarea = nombreTarea;
-    }
-
-    public void setTiempoEjecucion(Integer tiempoEjecucion) {
-        this.tiempoEjecucion = tiempoEjecucion;
-    }
-
-    public void setEs_critica(boolean es_critica) {
-        this.es_critica = es_critica;
-    }
-
-    public void setNivelPrioridad(Integer nivelPrioridad) {
-        this.nivelPrioridad = nivelPrioridad;
-    }
     public String getIdTarea() {
         return idTarea;
     }
@@ -54,7 +39,12 @@ public class Tarea {
 
     @Override
     public String toString() {
-        return "idTarea='" + idTarea + '\'' +
-                ", tEj=" + tiempoEjecucion;
+        return "Tarea: " + idTarea + ", tEj: " + tiempoEjecucion + " es critica: " + isEs_critica();
+        //return "Tarea: " +
+        //        "idTarea='" + idTarea + '\'' +
+        //        ", nombreTarea='" + nombreTarea + '\'' +
+        //        ", tiempoEjecucion=" + tiempoEjecucion +
+        //        ", es_critica=" + es_critica +
+        //        ", nivelPrioridad=" + nivelPrioridad;
     }
 }

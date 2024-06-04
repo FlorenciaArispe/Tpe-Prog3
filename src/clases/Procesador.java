@@ -8,10 +8,7 @@ public class Procesador {
     private int cantTareasCriticas;
     private int tiempoDeEjecucion;
 
-    public Procesador(){
-        this.cantTareasCriticas = 0;
-        this.tiempoDeEjecucion = 0;
-    }
+
     public Procesador(String id, String codigo, Boolean refrigerado, Integer anio) {
         this.id = id;
         this.codigo = codigo;
@@ -19,6 +16,14 @@ public class Procesador {
         this.anio = anio;
         this.cantTareasCriticas = 0;
         this.tiempoDeEjecucion = 0;
+    }
+    public Procesador(String id, String codigo, Boolean refrigerado, Integer anio, int cantTareasCriticas, int tiempoDeEjecucion) {
+        this.id = id;
+        this.codigo = codigo;
+        this.refrigerado = refrigerado;
+        this.anio = anio;
+        this.cantTareasCriticas = cantTareasCriticas;
+        this.tiempoDeEjecucion = tiempoDeEjecucion;
     }
 
     public String getId() {
@@ -37,8 +42,8 @@ public class Procesador {
     public int getCantTareasCriticas() {
         return cantTareasCriticas;
     }
-    public void setCantTareasCriticas() {
-        this.cantTareasCriticas++;
+    public void setCantTareasCriticas(int num) {
+        this.cantTareasCriticas += num;
     }
 
     public int getTiempoDeEjecucion() {
@@ -51,11 +56,6 @@ public class Procesador {
 
     @Override
     public String toString() {
-        return "Procesador{" +
-                "id='" + id + '\'' +
-                ", codigo='" + codigo + '\'' +
-                ", refrigerado=" + refrigerado +
-                ", anio=" + anio +
-                '}';
+        return "P: " + id + ", tEj=" + getTiempoDeEjecucion();
     }
 }
