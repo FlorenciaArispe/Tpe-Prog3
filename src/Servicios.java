@@ -1,3 +1,4 @@
+import clases.Mergesort;
 import clases.Procesador;
 import clases.Tarea;
 import utils.CSVReader;
@@ -89,9 +90,10 @@ public class Servicios {
     }
 
     // PARTE 2
-    public void asignarTarea(int tiempoX) {
+    public void asignarTareaBacktraking(int tiempoX) {
         if(!(tareasCriticas.size() / 2 > procesadores.size()))
             backtracking(tiempoX);
+
         else
             System.out.println("No es posible asignar las tareas." );
     }
@@ -123,7 +125,7 @@ public class Servicios {
                     p.setTiempoDeEjecucion(tarea.getTiempoEjecucion());
                     if(procesadorValido(p, tiempoX)){
                         cantidadDeEstados++;
-                        asignarTarea(tiempoX);
+                        backtracking(tiempoX);
                     }
                     solucionParcial.get(p).removeLast();
                     p.setTiempoDeEjecucion(-tarea.getTiempoEjecucion());
@@ -133,6 +135,45 @@ public class Servicios {
             arrayTareas.add(tarea);
         }
     }
+
+    public void asignarTareaGreedy(int tiempoX){
+        solucionFinal.clear();
+        for (Procesador p : procesadores.values()) {
+            solucionFinal.put(p, new LinkedList<>());
+        }
+        //ordenarTareasGreedy();
+        greedy(tiempoX);
+    }
+    int tiempoMenor = Integer.MAX_VALUE;
+    private void greedy(int tiempoX){
+        int tarea = 0;
+
+        //traemos las tareas ordenadas
+        //ordenamos la tarea de mayor a menor ya que las mas pesadas entran y las mas chicas se van acomodando asi se van
+        //equilibrado los procesadores
+        while(tarea < arrayTareas.size()) {
+            Tarea t = arrayTareas.get(tarea); //agarro la tarea q esta en el indice while
+            for (Procesador p : procesadores.values()) {//while
+                if (sePuedeAsignar(t, p)) {
+                    if (procesadorValido(p, tiempoX)) {
+                        p.setTiempoDeEjecucion(t.getTiempoEjecucion());
+                        actualizarCriticas(t, p, 1);
+                        int tiempoProcesador = p.getTiempoDeEjecucion();
+                        if (tiempoProcesador < tiempoMenor) {
+                            tiempoMenor = tiempoProcesador;
+                            solucionFinal.get(p).add(t);
+                        }
+                    }
+                }
+            }
+            tarea++;
+        }
+    }
+    public void ordenarTareasGreedy(){
+        Mergesort merge = new Mergesort();
+        merge.mergesort(1,1); //ver q pasar aca
+    }
+
     private boolean procesadorValido(Procesador p, int tiempoX){
         if((!p.getRefrigerado() && p.getTiempoDeEjecucion() <= tiempoX) || p.getRefrigerado())
             return true;

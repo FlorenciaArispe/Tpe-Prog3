@@ -20,10 +20,14 @@ public class Main {
 
 
         System.out.println("Servicio 4:");
-        servicios.asignarTarea(10);
+        servicios.asignarTareaBacktraking(-1);
 
         System.out.println("Solución Final: " + servicios.getSolucionFinal());
         System.out.println("Tiempo Maximo de Ejecución: " + servicios.getTiempoMaximoDeEjecucion());
         System.out.println("Métrica: " + servicios.getCantidadDeEstados());
+
+
+        servicios.asignarTareaGreedy(60);
+        System.out.println("Solución Final greedy: " + servicios.getSolucionFinal());
     }
 }
