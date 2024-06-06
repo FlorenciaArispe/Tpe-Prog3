@@ -1,5 +1,7 @@
 package clases;
 
+import java.util.Comparator;
+
 public class Tarea {
     private String idTarea;
     private String nombreTarea;

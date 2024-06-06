@@ -20,7 +20,7 @@ public class Main {
 
 
         System.out.println("Servicio 4:");
-        servicios.asignarTareaBacktraking(-1);
+        servicios.asignarTareaBacktraking(60);
 
         System.out.println("Solución Final: " + servicios.getSolucionFinal());
         System.out.println("Tiempo Maximo de Ejecución: " + servicios.getTiempoMaximoDeEjecucion());
@@ -29,5 +29,7 @@ public class Main {
 
         servicios.asignarTareaGreedy(60);
         System.out.println("Solución Final greedy: " + servicios.getSolucionFinal());
+        System.out.println("Tiempo Maximo de Ejecución: " + servicios.getTiempoMaximoDeEjecucion());
+        System.out.println("Métrica Greedy: " + servicios.getCantidadDeEstados());
     }
 }

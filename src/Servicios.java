@@ -18,6 +18,7 @@ public class Servicios {
     private ArrayList<Tarea> arrayTareas;
     private ArrayList<Tarea> tareasCriticas;
     private ArrayList<Tarea> tareasNoCriticas;
+    private ArrayList<Procesador> arrayProcesadores;
     private int mejorTiempo;
     private int cantidadDeEstados;
     private int tiempoMaximoDeEjecucion;
@@ -31,7 +32,9 @@ public class Servicios {
         procesadores = reader.readProcessors(pathProcesadores);
         solucionFinal = new HashMap<>();
         arrayTareas = new ArrayList<>();
+        arrayProcesadores = new ArrayList<>();
         arrayTareas.addAll(tareas.values());
+        arrayProcesadores.addAll(procesadores.values());
         tareasCriticas = new ArrayList<>();
         tareasNoCriticas = new ArrayList<>();
         for(Tarea t : tareas.values()){
@@ -137,41 +140,37 @@ public class Servicios {
     }
 
     public void asignarTareaGreedy(int tiempoX){
+        tiempoMaximoDeEjecucion = 0;
+        cantidadDeEstados = 0;
         solucionFinal.clear();
         for (Procesador p : procesadores.values()) {
             solucionFinal.put(p, new LinkedList<>());
         }
-        //ordenarTareasGreedy();
+        arrayTareas.sort(new Comparator<Tarea>() {
+            @Override
+            public int compare(Tarea t1, Tarea t2) {
+                return t2.getTiempoEjecucion() - t1.getTiempoEjecucion();
+            }
+        });
         greedy(tiempoX);
     }
-    int tiempoMenor = Integer.MAX_VALUE;
     private void greedy(int tiempoX){
         int tarea = 0;
-
-        //traemos las tareas ordenadas
-        //ordenamos la tarea de mayor a menor ya que las mas pesadas entran y las mas chicas se van acomodando asi se van
-        //equilibrado los procesadores
+        // p1 p2 p3 p4 p4 p3 p2 p1 p1 p2 p3 p4
         while(tarea < arrayTareas.size()) {
             Tarea t = arrayTareas.get(tarea); //agarro la tarea q esta en el indice while
-            for (Procesador p : procesadores.values()) {//while
-                if (sePuedeAsignar(t, p)) {
-                    if (procesadorValido(p, tiempoX)) {
-                        p.setTiempoDeEjecucion(t.getTiempoEjecucion());
-                        actualizarCriticas(t, p, 1);
-                        int tiempoProcesador = p.getTiempoDeEjecucion();
-                        if (tiempoProcesador < tiempoMenor) {
-                            tiempoMenor = tiempoProcesador;
-                            solucionFinal.get(p).add(t);
-                        }
-                    }
+            Procesador pMenorTiempo = getProcesadorMenorTiempo(tiempoX, t);
+            if (sePuedeAsignar(t, pMenorTiempo)) {
+                if (procesadorValido(pMenorTiempo, tiempoX)) {
+                    pMenorTiempo.setTiempoDeEjecucion(t.getTiempoEjecucion());
+                    actualizarCriticas(t, pMenorTiempo, 1);
+                    cantidadDeEstados++;
+
+                    solucionFinal.get(pMenorTiempo).add(t);
                 }
             }
             tarea++;
         }
-    }
-    public void ordenarTareasGreedy(){
-        Mergesort merge = new Mergesort();
-        merge.mergesort(1,1); //ver q pasar aca
     }
 
     private boolean procesadorValido(Procesador p, int tiempoX){
@@ -188,6 +187,18 @@ public class Servicios {
     private void actualizarCriticas(Tarea t, Procesador p, int num){
         if(t.isEs_critica())
             p.setCantTareasCriticas(num);
+    }
+    private Procesador getProcesadorMenorTiempo(int tiempoX, Tarea t) {
+        int tiempoMenor = Integer.MAX_VALUE;
+        Procesador indiceProcesador = null;
+        for (Procesador p : solucionFinal.keySet()) {
+            int tiempoTotalDelProcesador = p.getTiempoDeEjecucion() + t.getTiempoEjecucion();
+            if ((tiempoTotalDelProcesador <= tiempoX || p.getRefrigerado()) && p.getTiempoDeEjecucion() < tiempoMenor) {
+                tiempoMenor = p.getTiempoDeEjecucion();
+                indiceProcesador = p;
+            }
+        }
+        return indiceProcesador;
     }
 
     public int getCantidadDeEstados() {
