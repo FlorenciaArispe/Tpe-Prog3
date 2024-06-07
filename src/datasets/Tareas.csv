@@ -1,10 +1,15 @@
 T1;Tarea1;50;true;92
 T2;Tarea2;10;false;31
 T3;Tarea3;100;false;70
-T4;Tarea4;20;true;58
-T5;Tarea5;23;true;12
+T4;Tarea4;20;false;58
+T5;Tarea5;23;false;12
 T6;Tarea6;56;false;42
 T7;Tarea7;78;false;64
 T8;Tarea8;3;true;34
 T9;Tarea9;54;false;56
 T10;Tarea10;53;false;16
+T11;Tarea11;10;false;10
+T12;Tarea12;78;true;100
+T13;Tarea13;3;true;35
+T14;Tarea14;54;true;30
+T15;Tarea15;53;true;40

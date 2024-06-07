@@ -102,12 +102,7 @@ public class Servicios {
     }
     private void backtracking(int tiempoX){
         if(arrayTareas.isEmpty()) {
-            int tiempoMayor = 0;
-            for (Procesador proc : solucionParcial.keySet()) {
-                int tiempoProcesador = proc.getTiempoDeEjecucion();
-                if (tiempoProcesador > tiempoMayor)
-                    tiempoMayor = tiempoProcesador;
-            }
+            int tiempoMayor = pMayorTiempo();
             if(tiempoMayor < mejorTiempo) {
                 this.solucionFinal = new HashMap<>(solucionParcial.size());
                 for(Procesador p : solucionParcial.keySet()){
@@ -138,14 +133,10 @@ public class Servicios {
             arrayTareas.add(tarea);
         }
     }
-
     public void asignarTareaGreedy(int tiempoX){
         tiempoMaximoDeEjecucion = 0;
         cantidadDeEstados = 0;
-        solucionFinal.clear();
-        for (Procesador p : procesadores.values()) {
-            solucionFinal.put(p, new LinkedList<>());
-        }
+        cargarSolucionFinalConProc();
         arrayTareas.sort(new Comparator<Tarea>() {
             @Override
             public int compare(Tarea t1, Tarea t2) {
@@ -160,19 +151,40 @@ public class Servicios {
         while(tarea < arrayTareas.size()) {
             Tarea t = arrayTareas.get(tarea); //agarro la tarea q esta en el indice while
             Procesador pMenorTiempo = getProcesadorMenorTiempo(tiempoX, t);
-            if (sePuedeAsignar(t, pMenorTiempo)) {
-                if (procesadorValido(pMenorTiempo, tiempoX)) {
-                    pMenorTiempo.setTiempoDeEjecucion(t.getTiempoEjecucion());
-                    actualizarCriticas(t, pMenorTiempo, 1);
-                    cantidadDeEstados++;
 
-                    solucionFinal.get(pMenorTiempo).add(t);
-                }
+            if(pMenorTiempo != null) { //que no me traiga un null como procesador
+
+                System.out.println("agrega esta tarea" + t);
+                pMenorTiempo.setTiempoDeEjecucion(t.getTiempoEjecucion());
+                actualizarCriticas(t, pMenorTiempo, 1);
+                solucionFinal.get(pMenorTiempo).add(t);
+                tiempoMaximoDeEjecucion = pMayorTiempo();
+            }
+            else{ //si es null q devuelva vacia mi solucion final
+                cargarSolucionFinalConProc();
+                tarea = arrayTareas.size();
             }
             tarea++;
         }
     }
+    private void cargarSolucionFinalConProc (){
+        solucionFinal.clear();
+        tiempoMaximoDeEjecucion = 0;
+        for (Procesador p : procesadores.values()) {
+            solucionFinal.put(new Procesador(p.getId(), p.getCodigo(), p.getRefrigerado(), p.getAnio(),
+                              p.getCantTareasCriticas(), p.getTiempoDeEjecucion()), new LinkedList<>());
 
+        }
+    }
+    private int pMayorTiempo(){
+        int tiempoMayor = 0;
+            for (Procesador proc : solucionParcial.keySet()) {
+                int tiempoProcesador = proc.getTiempoDeEjecucion();
+                if (tiempoProcesador > tiempoMayor)
+                    tiempoMayor = tiempoProcesador;
+            }
+        return tiempoMayor;
+    }
     private boolean procesadorValido(Procesador p, int tiempoX){
         if((!p.getRefrigerado() && p.getTiempoDeEjecucion() <= tiempoX) || p.getRefrigerado())
             return true;
@@ -192,10 +204,13 @@ public class Servicios {
         int tiempoMenor = Integer.MAX_VALUE;
         Procesador indiceProcesador = null;
         for (Procesador p : solucionFinal.keySet()) {
+            cantidadDeEstados++;
             int tiempoTotalDelProcesador = p.getTiempoDeEjecucion() + t.getTiempoEjecucion();
-            if ((tiempoTotalDelProcesador <= tiempoX || p.getRefrigerado()) && p.getTiempoDeEjecucion() < tiempoMenor) {
-                tiempoMenor = p.getTiempoDeEjecucion();
-                indiceProcesador = p;
+            if(sePuedeAsignar(t, p)) {
+                if ((tiempoTotalDelProcesador <= tiempoX || p.getRefrigerado()) && p.getTiempoDeEjecucion() < tiempoMenor) {
+                    tiempoMenor = p.getTiempoDeEjecucion();
+                    indiceProcesador = p;
+                }
             }
         }
         return indiceProcesador;
@@ -207,7 +222,6 @@ public class Servicios {
     public int getTiempoMaximoDeEjecucion() {
         return tiempoMaximoDeEjecucion;
     }
-
     public Map<Procesador, LinkedList<Tarea>> getSolucionFinal() {
         return solucionFinal;
     }
