@@ -20,16 +20,23 @@ public class Main {
 
 
         System.out.println("Servicio 4:");
-        servicios.asignarTareaBacktraking(60);
+        servicios.asignarTareaBacktraking(80);
+        if(servicios.getTiempoMaximoDeEjecucion() == 0)
+            System.out.println("No se pudo asignar las tareas en Backtracking.");
+        else {
+            System.out.println("Solución Final Backtracking: " + servicios.getSolucionFinal());
+            System.out.println("Tiempo Maximo de Ejecución: " + servicios.getTiempoMaximoDeEjecucion());
+            System.out.println("Métrica: " + servicios.getCantidadDeEstados());
+        }
 
-        System.out.println("Solución Final: " + servicios.getSolucionFinal());
-        System.out.println("Tiempo Maximo de Ejecución: " + servicios.getTiempoMaximoDeEjecucion());
-        System.out.println("Métrica: " + servicios.getCantidadDeEstados());
 
-
-        servicios.asignarTareaGreedy(60);
-        System.out.println("Solución Final greedy: " + servicios.getSolucionFinal());
-        System.out.println("Tiempo Maximo de Ejecución: " + servicios.getTiempoMaximoDeEjecucion());
-        System.out.println("Métrica Greedy: " + servicios.getCantidadDeEstados());
+        servicios.asignarTareaGreedy(80);
+        if(servicios.getTiempoMaximoDeEjecucion() == 0)
+            System.out.println("No se pudo asignar las tareas en Greedy.");
+        else {
+            System.out.println("Solución Final greedy: " + servicios.getSolucionFinal());
+            System.out.println("Tiempo Maximo de Ejecución: " + servicios.getTiempoMaximoDeEjecucion());
+            System.out.println("Métrica Greedy: " + servicios.getCantidadDeEstados());
+        }
     }
 }

@@ -1,8 +1,7 @@
 package clases;
 
-import java.util.Comparator;
+public class Tarea implements Comparable<Tarea> {
 
-public class Tarea {
     private String idTarea;
     private String nombreTarea;
     private Integer tiempoEjecucion;
@@ -39,6 +38,10 @@ public class Tarea {
         return nombreTarea;
     }
 
+    @Override
+    public int compareTo(Tarea t2) {
+        return t2.getTiempoEjecucion() - this.getTiempoEjecucion();
+    }
     @Override
     public String toString() {
         return "Tarea: " + idTarea + ", tEj: " + tiempoEjecucion + " es critica: " + isEs_critica();

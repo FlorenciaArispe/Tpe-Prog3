@@ -18,7 +18,6 @@ public class Servicios {
     private ArrayList<Tarea> arrayTareas;
     private ArrayList<Tarea> tareasCriticas;
     private ArrayList<Tarea> tareasNoCriticas;
-    private ArrayList<Procesador> arrayProcesadores;
     private int mejorTiempo;
     private int cantidadDeEstados;
     private int tiempoMaximoDeEjecucion;
@@ -32,9 +31,7 @@ public class Servicios {
         procesadores = reader.readProcessors(pathProcesadores);
         solucionFinal = new HashMap<>();
         arrayTareas = new ArrayList<>();
-        arrayProcesadores = new ArrayList<>();
         arrayTareas.addAll(tareas.values());
-        arrayProcesadores.addAll(procesadores.values());
         tareasCriticas = new ArrayList<>();
         tareasNoCriticas = new ArrayList<>();
         for(Tarea t : tareas.values()){
@@ -96,13 +93,17 @@ public class Servicios {
     public void asignarTareaBacktraking(int tiempoX) {
         if(!(tareasCriticas.size() / 2 > procesadores.size()))
             backtracking(tiempoX);
-
-        else
-            System.out.println("No es posible asignar las tareas." );
     }
+    // El método obtiene cada tarea del arreglo de tareas y las va agregando a una solucion parcial según si se puede asignar al
+    // procesador. En caso de que la tarea sea crítica actualiza la cantidad de críticas en el procesador, también actualiza el
+    // tiempo y verifica que el procesador sea válido para corroborar que sea una posible solución.
+    // Si se encuentra una posible solución ( cuando se asignaron todas las tareas a los procesadores ) y el tiempo mayor del
+    // procesador es menor que el mejor tiempo hasta ahora, se copia la "solución parcial" que veníamos registrando a una solución final.
+    // Se puede acceder a través de "getSolucionFinal()" para visualizar el resultado.
     private void backtracking(int tiempoX){
         if(arrayTareas.isEmpty()) {
-            int tiempoMayor = pMayorTiempo();
+            //                      O(n)
+            int tiempoMayor = pMayorTiempo(solucionParcial);
             if(tiempoMayor < mejorTiempo) {
                 this.solucionFinal = new HashMap<>(solucionParcial.size());
                 for(Procesador p : solucionParcial.keySet()){
@@ -121,7 +122,7 @@ public class Servicios {
                     solucionParcial.get(p).add(tarea);
                     actualizarCriticas(tarea, p, 1);
                     p.setTiempoDeEjecucion(tarea.getTiempoEjecucion());
-                    if(procesadorValido(p, tiempoX)){
+                    if(procesadorValido(p, tiempoX) && pMayorTiempo(solucionParcial) < mejorTiempo){
                         cantidadDeEstados++;
                         backtracking(tiempoX);
                     }
@@ -133,52 +134,53 @@ public class Servicios {
             arrayTareas.add(tarea);
         }
     }
+
+    // Este método vuelve a resetear los valores del tiempo máximo de ejecución y la métrica y vuelve a cargar la solución
+    // final con los procesadores como clave. Luego ordena las tareas por tiempo de ejecución para poder asignarlas a cada
+    // procesador de mayor a menor. Ya que al colocar las tareas que más tiempo de ejecución contengan primero, las de menor
+    // tiempo irán equilibrando la solucion.
     public void asignarTareaGreedy(int tiempoX){
         tiempoMaximoDeEjecucion = 0;
         cantidadDeEstados = 0;
         cargarSolucionFinalConProc();
-        arrayTareas.sort(new Comparator<Tarea>() {
-            @Override
-            public int compare(Tarea t1, Tarea t2) {
-                return t2.getTiempoEjecucion() - t1.getTiempoEjecucion();
-            }
-        });
+        Collections.sort(arrayTareas);
         greedy(tiempoX);
     }
+    // Este método recorre las tareas y obtiene el procesador que menor tiempo tenga hasta el momento y sea válido, si
+    // existe el procesador, le setea el tiempo de la tarea, actualiza la cantidad de tareas críticas del propio procesador
+    // y lo agrega a la solución final, luego obtiene el procesador con mayor tiempo.
+    // Si el procesador no existe, se resetea la solución final con los procesadores como clave y finaliza el recorrido de
+    // las tareas.
     private void greedy(int tiempoX){
         int tarea = 0;
-        // p1 p2 p3 p4 p4 p3 p2 p1 p1 p2 p3 p4
         while(tarea < arrayTareas.size()) {
             Tarea t = arrayTareas.get(tarea); //agarro la tarea q esta en el indice while
             Procesador pMenorTiempo = getProcesadorMenorTiempo(tiempoX, t);
 
             if(pMenorTiempo != null) { //que no me traiga un null como procesador
-
-                System.out.println("agrega esta tarea" + t);
                 pMenorTiempo.setTiempoDeEjecucion(t.getTiempoEjecucion());
                 actualizarCriticas(t, pMenorTiempo, 1);
                 solucionFinal.get(pMenorTiempo).add(t);
-                tiempoMaximoDeEjecucion = pMayorTiempo();
+                tiempoMaximoDeEjecucion = pMayorTiempo(solucionFinal);
             }
-            else{ //si es null q devuelva vacia mi solucion final
+            else {
                 cargarSolucionFinalConProc();
                 tarea = arrayTareas.size();
             }
             tarea++;
         }
     }
-    private void cargarSolucionFinalConProc (){
+    private void cargarSolucionFinalConProc(){
         solucionFinal.clear();
         tiempoMaximoDeEjecucion = 0;
         for (Procesador p : procesadores.values()) {
             solucionFinal.put(new Procesador(p.getId(), p.getCodigo(), p.getRefrigerado(), p.getAnio(),
                               p.getCantTareasCriticas(), p.getTiempoDeEjecucion()), new LinkedList<>());
-
         }
     }
-    private int pMayorTiempo(){
+    private int pMayorTiempo(Map<Procesador, LinkedList<Tarea>> solucion){
         int tiempoMayor = 0;
-            for (Procesador proc : solucionParcial.keySet()) {
+            for (Procesador proc : solucion.keySet()) {
                 int tiempoProcesador = proc.getTiempoDeEjecucion();
                 if (tiempoProcesador > tiempoMayor)
                     tiempoMayor = tiempoProcesador;
