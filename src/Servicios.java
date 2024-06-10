@@ -1,4 +1,3 @@
-import clases.Mergesort;
 import clases.Procesador;
 import clases.Tarea;
 import utils.CSVReader;
@@ -78,7 +77,7 @@ public class Servicios {
      */
     public List<Tarea> servicio3(int prioridadInferior, int prioridadSuperior) {
         List<Tarea> resultado= new ArrayList<>();
-        if(prioridadInferior>=1 && prioridadSuperior<=100){
+        if(prioridadInferior >= 1 && prioridadSuperior <= 100){
             for (String clave : tareas.keySet()) {
                 Tarea tarea = tareas.get(clave);
                 if(tarea.getNivelPrioridad()>= prioridadInferior && tarea.getNivelPrioridad() <= prioridadSuperior)
@@ -188,9 +187,7 @@ public class Servicios {
         return tiempoMayor;
     }
     private boolean procesadorValido(Procesador p, int tiempoX){
-        if((!p.getRefrigerado() && p.getTiempoDeEjecucion() <= tiempoX) || p.getRefrigerado())
-            return true;
-        return false;
+        return p.getRefrigerado() || p.getTiempoDeEjecucion() <= tiempoX;
     }
     private boolean sePuedeAsignar(Tarea t, Procesador p){
         if(!t.isEs_critica() || (t.isEs_critica() && p.getCantTareasCriticas() < 2)){

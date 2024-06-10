@@ -44,12 +44,9 @@ public class Tarea implements Comparable<Tarea> {
     }
     @Override
     public String toString() {
-        return "Tarea: " + idTarea + ", tEj: " + tiempoEjecucion + " es critica: " + isEs_critica();
-        //return "Tarea: " +
-        //        "idTarea='" + idTarea + '\'' +
-        //        ", nombreTarea='" + nombreTarea + '\'' +
-        //        ", tiempoEjecucion=" + tiempoEjecucion +
-        //        ", es_critica=" + es_critica +
-        //        ", nivelPrioridad=" + nivelPrioridad;
+        return "Tarea: " + idTarea +
+                ", tEj: " + tiempoEjecucion +
+                " es critica: " + isEs_critica() +
+                ", nivelPrioridad: " + nivelPrioridad;
     }
 }

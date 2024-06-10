@@ -20,11 +20,11 @@ public class CSVReader {
     }
 
     public Map<String, Tarea> readTasks(String taskPath) {
-        Map<String, Tarea> tareas= new HashMap<>();
         // Obtengo una lista con las lineas del archivo
         // lines.get(0) tiene la primer linea del archivo
         // lines.get(1) tiene la segunda linea del archivo... y así
         ArrayList<String[]> lines = this.readContent(taskPath);
+        Map<String, Tarea> tareas = new HashMap<>(lines.size() * 2);
 
         for (String[] line: lines) {
 
